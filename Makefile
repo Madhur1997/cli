@@ -9,6 +9,7 @@ _:=$(shell ./scripts/warn-outside-container $(MAKECMDGOALS))
 .PHONY: clean
 clean: ## remove build artifacts
 	rm -rf ./build/* cli/winresources/rsrc_* ./man/man[1-9] docs/yaml/gen
+	rm -f /tmp/vndr.log
 
 .PHONY: test-unit
 test-unit: ## run unit tests, to change the output format use: GOTESTSUM_FORMAT=(dots|short|standard-quiet|short-verbose|standard-verbose) make test-unit 
@@ -64,8 +65,9 @@ dynbinary: ## build dynamically linked binary
 
 vendor: vendor.conf ## check that vendor matches vendor.conf
 	rm -rf vendor
-	bash -c 'vndr |& grep -v -i clone'
+	bash -c 'vndr |& grep -v -i clone | tee /tmp/vndr.log'
 	scripts/validate/check-git-diff vendor
+	scripts/validate/check-all-packages-vendored
 
 .PHONY: authors
 authors: ## generate AUTHORS file from git history

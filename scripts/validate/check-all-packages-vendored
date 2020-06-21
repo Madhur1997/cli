@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eu
+
+FILE_PATH='/tmp/vndr.log'
+WARN_MISS_VENDOR='WARNING: dependency is not vendored'
+
+if grep -q $WARN_MISS_VENDOR $FILE_PATH; then
+	echo 
+	echo "Some dependencies are not vendored."
+	echo
+	exit 1
+fi
